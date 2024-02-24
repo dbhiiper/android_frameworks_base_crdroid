@@ -1483,6 +1483,29 @@ public class ComputerEngine implements Computer {
         return Signature.areExactMatch(signatures, new Signature[]{MICROG_REAL_SIGNATURE});
     }
 
+    private static Optional<Signature> generateFakeSignature(AndroidPackage p) {
+        if (!isMicrogSigned(p)) {
+            return Optional.empty();
+        }
+
+        Bundle metadata = p.getMetaData();
+        if (metadata == null) {
+            return Optional.empty();
+        }
+
+        String fakeSignatureStr = metadata.getString("fake-signature");
+        if (TextUtils.isEmpty(fakeSignatureStr)) {
+            return Optional.empty();
+        }
+
+        // Only MICROG_FAKE_SIGNATURE can be faked
+        Signature fakeSignature = new Signature(fakeSignatureStr);
+        if (!fakeSignature.equals(MICROG_FAKE_SIGNATURE)) { return Optional.empty();
+        }
+
+        return Optional.of(fakeSignature);
+    }
+
     private boolean requestsFakeSignature(AndroidPackage p) {
         return p.getMetaData() != null &&
                 p.getMetaData().getString("fake-signature") != null;
