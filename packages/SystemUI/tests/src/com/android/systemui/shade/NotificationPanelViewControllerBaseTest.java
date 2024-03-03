@@ -72,6 +72,7 @@ import com.android.keyguard.KeyguardSliceViewController;
 import com.android.keyguard.KeyguardStatusView;
 import com.android.keyguard.KeyguardStatusViewController;
 import com.android.keyguard.KeyguardUpdateMonitor;
+import com.android.keyguard.FaceIconViewController;
 import com.android.keyguard.LockIconViewController;
 import com.android.keyguard.dagger.KeyguardQsUserSwitchComponent;
 import com.android.keyguard.dagger.KeyguardStatusBarViewComponent;
@@ -138,6 +139,7 @@ import com.android.systemui.statusbar.notification.ConversationNotificationManag
 import com.android.systemui.statusbar.notification.DynamicPrivacyController;
 import com.android.systemui.statusbar.notification.NotificationWakeUpCoordinator;
 import com.android.systemui.statusbar.notification.NotificationWakeUpCoordinatorLogger;
+import com.android.systemui.statusbar.notification.collection.NotifPipeline;
 import com.android.systemui.statusbar.notification.row.NotificationGutsManager;
 import com.android.systemui.statusbar.notification.stack.AmbientState;
 import com.android.systemui.statusbar.notification.stack.NotificationListContainer;
@@ -322,6 +324,8 @@ public class NotificationPanelViewControllerBaseTest extends SysuiTestCase {
     @Mock private JavaAdapter mJavaAdapter;
     @Mock private CastController mCastController;
     @Mock private KeyguardRootView mKeyguardRootView;
+    @Mock private NotifPipeline mNotifPipeline;
+    @Mock private FaceIconViewController mFaceIconViewController;
 
     protected final int mMaxUdfpsBurnInOffsetY = 5;
     protected KeyguardBottomAreaInteractor mKeyguardBottomAreaInteractor;
@@ -653,7 +657,9 @@ public class NotificationPanelViewControllerBaseTest extends SysuiTestCase {
                 mKeyguardViewConfigurator,
                 mKeyguardFaceAuthInteractor,
                 mKeyguardRootView,
-                mContext);
+                mContext,
+                mNotifPipeline,
+                mFaceIconViewController);
         mNotificationPanelViewController.initDependencies(
                 mCentralSurfaces,
                 null,

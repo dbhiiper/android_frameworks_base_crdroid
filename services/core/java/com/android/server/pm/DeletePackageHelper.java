@@ -63,6 +63,8 @@ import android.util.SparseBooleanArray;
 import com.android.internal.annotations.GuardedBy;
 import com.android.internal.util.ArrayUtils;
 import com.android.internal.util.Preconditions;
+import com.android.server.LocalServices;
+import com.android.server.om.OverlayManagerService;
 import com.android.server.pm.permission.PermissionManagerServiceInternal;
 import com.android.server.pm.pkg.AndroidPackage;
 import com.android.server.pm.pkg.PackageStateInternal;
@@ -482,6 +484,8 @@ final class DeletePackageHelper {
             deleteInstalledSystemPackage(action, allUserHandles, writeSettings);
             new InstallPackageHelper(mPm).restoreDisabledSystemPackageLIF(
                     action, allUserHandles, writeSettings);
+            LocalServices.getService(OverlayManagerService.class)
+                    .updatePackageManagerInternal(packageName, userId);
         } else {
             if (DEBUG_REMOVE) Slog.d(TAG, "Removing non-system package: " + ps.getPackageName());
             deleteInstalledPackageLIF(ps, deleteCodeAndResources, flags, allUserHandles,
@@ -859,8 +863,17 @@ final class DeletePackageHelper {
         }
         final int callingUserId = UserHandle.getUserId(callingUid);
         // If the caller installed the pkgName, then allow it to silently uninstall.
-        if (callingUid == snapshot.getPackageUid(
-                snapshot.getInstallerPackageName(pkgName, userId), 0, callingUserId)) {
+        String installerPkgName;
+        try {
+            installerPkgName = snapshot.getInstallerPackageName(pkgName, userId);
+        } catch (IllegalArgumentException e) {
+            // We may not be able to retrieve the installer package name if the package is not
+            // installed for userId, which is possible if we are being invoked with the
+            // DELETE_ALL_USERS flag. In that case, just skip the check.
+            installerPkgName = null;
+        }
+        if (installerPkgName != null && callingUid == snapshot.getPackageUid(
+                installerPkgName, 0, callingUserId)) {
             return true;
         }
 

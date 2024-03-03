@@ -62,7 +62,6 @@ public class PixelPropsUtils {
             "com.google.android.apps.customization.pixel",
             "com.google.android.apps.emojiwallpaper",
             "com.google.android.apps.privacy.wildlife",
-            "com.google.android.apps.subscriptions.red",
             "com.google.android.apps.wallpaper",
             "com.google.android.apps.wallpaper.pixel",
             "com.google.android.googlequicksearchbox",
@@ -85,12 +84,15 @@ public class PixelPropsUtils {
             "com.google.android.apps.pixelmigrate",
             "com.google.android.apps.recorder",
             "com.google.android.apps.restore",
+            "com.google.android.apps.subscriptions.red",
             "com.google.android.apps.tachyon",
             "com.google.android.apps.tycho",
             "com.google.android.apps.wearables.maestro.companion",
             "com.google.android.apps.youtube.kids",
             "com.google.android.apps.youtube.music",
             "com.google.android.as",
+            "com.google.android.backup",
+            "com.google.android.backuptransport",
             "com.google.android.dialer",
             "com.google.android.euicc",
             "com.google.android.setupwizard",
@@ -404,14 +406,14 @@ public class PixelPropsUtils {
 
     private static void spoofBuildGms() {
         // Alter build parameters to avoid hardware attestation enforcement
-        setPropValue("BRAND", "Hisense");
-        setPropValue("MANUFACTURER", "Hisense");
-        setPropValue("DEVICE", "HS6735MT");
-        setPropValue("ID", "MRA58K");
-        setPropValue("FINGERPRINT", "Hisense/F30/HS6735MT:6.0/MRA58K/L1228.6.01.01:user/release-keys");
-        setPropValue("MODEL", "Hisense F30");
-        setPropValue("PRODUCT", "F30");
-        setVersionFieldString("SECURITY_PATCH", "2016-02-01");
+        setPropValue("BRAND", "motorola");
+        setPropValue("MANUFACTURER", "motorola");
+        setPropValue("DEVICE", "griffin");
+        setPropValue("ID", "MCC24.246-37");
+        setPropValue("FINGERPRINT", "motorola/griffin_retcn/griffin:6.0.1/MCC24.246-37/42:user/release-keys");
+        setPropValue("MODEL", "XT1650-05");
+        setPropValue("PRODUCT", "griffin_retcn");
+        setVersionFieldString("SECURITY_PATCH", "2016-07-01");
     }
 
     private static boolean isCallerSafetyNet() {

@@ -278,6 +278,9 @@ public final class OverlayManagerService extends SystemService {
             HandlerThread packageReceiverThread = new HandlerThread(TAG);
             packageReceiverThread.start();
 
+            HandlerThread userReceiverThread = new HandlerThread(TAG + "_User");
+            userReceiverThread.start();
+
             final IntentFilter packageFilter = new IntentFilter();
             packageFilter.addAction(ACTION_PACKAGE_ADDED);
             packageFilter.addAction(ACTION_PACKAGE_CHANGED);
@@ -290,7 +293,7 @@ public final class OverlayManagerService extends SystemService {
             userFilter.addAction(ACTION_USER_ADDED);
             userFilter.addAction(ACTION_USER_REMOVED);
             getContext().registerReceiverAsUser(new UserReceiver(), UserHandle.ALL,
-                    userFilter, null, null);
+                    userFilter, null, userReceiverThread.getThreadHandler());
 
             restoreSettings();
 
@@ -1495,6 +1498,18 @@ public final class OverlayManagerService extends SystemService {
             am.scheduleApplicationInfoChanged(targetPackageNames, userId);
         } catch (RemoteException e) {
             Slog.e(TAG, "updateActivityManager remote exception", e);
+        }
+    }
+
+    public void updatePackageManagerInternal(String targetPackageName, int targetUserId) {
+        synchronized (mLock) {
+            if (targetUserId == UserHandle.USER_ALL) {
+                for (int userId : mUserManager.getUserIds()) {
+                    updatePackageManagerLocked(Set.of(targetPackageName), userId);
+                }
+            } else {
+                updatePackageManagerLocked(Set.of(targetPackageName), targetUserId);
+            }
         }
     }
 
