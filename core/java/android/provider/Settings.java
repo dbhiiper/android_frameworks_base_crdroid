@@ -6501,73 +6501,6 @@ public final class Settings {
         public static final String WIFI_STANDARD_ICON = "wifi_standard_icon";
 
         /**
-         * QS header image
-         * format = "qs_header_image_" + QS_HEADER_IMAGE
-         * values 0 and -1 are reserved to mark disabled state (0) and custom user image (-1)
-         * @hide
-         */
-        public static final String QS_HEADER_IMAGE = "qs_header_image";
-
-        /**
-         * QS header image tint
-         * 0 - No tint
-         * 1 - Accent
-         * 2 - Color primary
-         * 3 - Color primary inverse
-         * 4 - Custom
-         * @hide
-         */
-        public static final String QS_HEADER_IMAGE_TINT = "qs_header_image_tint";
-
-        /**
-         * QS header image custom tint
-         * @hide
-         **/
-        public static final String QS_HEADER_IMAGE_TINT_CUSTOM = "qs_header_image_tint_custom";
-
-        /**
-         * QS header image alpha
-         * @hide
-         **/
-        public static final String QS_HEADER_IMAGE_ALPHA = "qs_header_image_alpha";
-
-        /**
-         * QS header image portrait height
-         * @hide
-         **/
-        public static final String QS_HEADER_IMAGE_HEIGHT_PORTRAIT = "qs_header_image_height_portrait";
-
-        /**
-         * QS header image landscape height
-         * @hide
-         **/
-        public static final String QS_HEADER_IMAGE_HEIGHT_LANDSCAPE = "qs_header_image_height_landscape";
-
-        /**
-         * Wether to enable QS header image in landscape mode
-         * @hide
-         **/
-        public static final String QS_HEADER_IMAGE_LANDSCAPE_ENABLED = "qs_header_image_landscape_enabled";
-
-        /**
-         * QS header image side padding
-         * @hide
-         **/
-         public static final String QS_HEADER_IMAGE_PADDING_SIDE = "qs_header_image_padding_side";
-
-         /**
-          * QS header image top padding
-          * @hide
-          **/
-        public static final String QS_HEADER_IMAGE_PADDING_TOP = "qs_header_image_padding_top";
-
-        /**
-          * QS header image custom URI
-          * @hide
-          **/
-        public static final String QS_HEADER_IMAGE_URI = "qs_header_image_uri";
-
-        /**
          * Which Vibration Pattern to use
          * 0: dzzz-dzzz
          * 1: dzzz-da
@@ -6639,6 +6572,58 @@ public final class Settings {
          * @hide
          */
         public static final String UDFPS_ANIM_STYLE = "udfps_anim_style";
+
+        /**
+         * @hide
+         */
+        public static final String UDFPS_ICON = "udfps_icon";
+
+        /**
+         * @hide
+         */
+        public static final String NAVIGATION_BAR_IME_SPACE = "navigation_bar_ime_space";
+
+        /**
+         * Whether to use the custom status bar header or not
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER = "status_bar_custom_header";
+
+        /**
+         * Whether to apply a shadow on top of the header image
+         * value is the alpha value of the shadow image is 0 -> no shadow -> 255 black
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER_SHADOW = "status_bar_custom_header_shadow";
+
+        /**
+         * header image package to use for daylight header - package name - null if default
+         * @hide
+         */
+        public static final String STATUS_BAR_DAYLIGHT_HEADER_PACK = "status_bar_daylight_header_pack";
+
+        /**
+         * Current active provider - available currently "static" "daylight"
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER_PROVIDER = "status_bar_custom_header_provider";
+
+        /**
+         * Manual override picture to use
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER_IMAGE = "status_bar_custom_header_image";
+
+        /**
+         * @hide
+         */
+        public static final String STATUS_BAR_FILE_HEADER_IMAGE = "status_bar_file_header_image";
+
+        /**
+         * Header height
+         * @hide
+         */
+        public static final String STATUS_BAR_CUSTOM_HEADER_HEIGHT = "status_bar_custom_header_height";
 
         /**
          * Keys we no longer back up under the current schema, but want to continue to

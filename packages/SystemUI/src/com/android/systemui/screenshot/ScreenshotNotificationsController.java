@@ -17,6 +17,7 @@
 package com.android.systemui.screenshot;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
+import static com.android.internal.messages.nano.SystemMessageProto.SystemMessage.NOTE_GLOBAL_SCREENSHOT;
 import static com.android.systemui.screenshot.ScreenshotController.SCREENSHOT_URI_ID;
 
 import android.app.Notification;
@@ -29,10 +30,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.UserHandle;
-import android.util.DisplayMetrics;
-import android.view.WindowManager;
+import android.service.notification.StatusBarNotification;
 
-import com.android.internal.messages.nano.SystemMessageProto;
 import com.android.systemui.R;
 import com.android.systemui.SystemUIApplication;
 import com.android.systemui.util.NotificationChannels;
@@ -45,20 +44,17 @@ import javax.inject.Inject;
 public class ScreenshotNotificationsController {
     private static final String TAG = "ScreenshotNotificationManager";
     private static final String MIME = "image/*";
+    private static final String GROUP_KEY = "screenshot_post_action_group";
+    private static final int GROUP_ID = GROUP_KEY.hashCode();
 
     private final Context mContext;
-    private final Resources mResources;
     private final NotificationManager mNotificationManager;
 
     @Inject
-    ScreenshotNotificationsController(Context context, WindowManager windowManager) {
+    ScreenshotNotificationsController(Context context) {
         mContext = context;
-        mResources = context.getResources();
         mNotificationManager =
                 (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        windowManager.getDefaultDisplay().getRealMetrics(displayMetrics);
     }
 
     /**
@@ -95,7 +91,7 @@ public class ScreenshotNotificationsController {
         Notification n = new Notification.BigTextStyle(b)
                 .bigText(errorMsg)
                 .build();
-        mNotificationManager.notify(SystemMessageProto.SystemMessage.NOTE_GLOBAL_SCREENSHOT, n);
+        mNotificationManager.notify(TAG, NOTE_GLOBAL_SCREENSHOT, n);
     }
 
     /**
@@ -141,6 +137,7 @@ public class ScreenshotNotificationsController {
                 .setSmallIcon(R.drawable.screenshot_image)
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
+                .setGroup(GROUP_KEY)
                 .setStyle(new Notification.BigPictureStyle()
                         .bigPicture(bitmap).bigLargeIcon(bitmap))
                 .setColor(mContext.getColor(
@@ -149,6 +146,50 @@ public class ScreenshotNotificationsController {
                 .addAction(actionDelete.build())
                 .setContentIntent(pi);
 
-        mNotificationManager.notify(requestCode, b.build());
+        mNotificationManager.notify(TAG, requestCode, b.build());
+        maybePostGroup();
+    }
+
+    public void dismissPostActionNotification(int id) {
+        mNotificationManager.cancel(TAG, id);
+        maybeDismissGroup();
+        maybeCloseSystemDialogs();
+    }
+
+    private void maybePostGroup() {
+        if (countGroupedNotifications() < 2)
+            return; // only post after we show the 2nd notification
+        Notification.Builder b = new Notification.Builder(mContext, NotificationChannels.SCREENSHOTS_HEADSUP)
+                .setSmallIcon(R.drawable.screenshot_image)
+                .setContentTitle(mContext.getResources().getString(R.string.screenshot_saved_title))
+                .setGroup(GROUP_KEY)
+                .setGroupSummary(true)
+                .setAutoCancel(true);
+        mNotificationManager.notify(TAG, GROUP_ID, b.build());
+    }
+
+    private void maybeDismissGroup() {
+        if (countGroupedNotifications() >= 1)
+            return; // dismiss only when we have one notification left
+        mNotificationManager.cancel(TAG, GROUP_ID);
+    }
+
+    private void maybeCloseSystemDialogs() {
+        if (countGroupedNotifications() > 0)
+            return; // only dismiss when we cancel the last group notification
+        mContext.closeSystemDialogs();
+    }
+
+    private int countGroupedNotifications() {
+        StatusBarNotification[] notifications = mNotificationManager.getActiveNotifications();
+        int count = 0;
+        for (StatusBarNotification notification : notifications) {
+            final String tag = notification.getTag();
+            if (tag == null || !tag.equals(TAG)) continue;
+            final int id = notification.getId();
+            if (id != GROUP_ID && id != NOTE_GLOBAL_SCREENSHOT)
+                count++;
+        }
+        return count;
     }
 }
